@@ -1,5 +1,5 @@
 local ffi = require("ffi")
---local bit = require("bit")
+local bit = require("bit")
 
 if ffi.abi("64bit") then
 	ffi.cdef([[typedef uint64_t ULONG_PTR;]])
@@ -42,6 +42,29 @@ HANDLE CreateFileA(
 /* [in, optional] */ HANDLE                hTemplateFile
 );
 
+typedef struct _FILETIME {
+  DWORD dwLowDateTime;
+  DWORD dwHighDateTime;
+} FILETIME, *PFILETIME, *LPFILETIME;
+
+typedef struct _BY_HANDLE_FILE_INFORMATION {
+  DWORD    dwFileAttributes;
+  FILETIME ftCreationTime;
+  FILETIME ftLastAccessTime;
+  FILETIME ftLastWriteTime;
+  DWORD    dwVolumeSerialNumber;
+  DWORD    nFileSizeHigh;
+  DWORD    nFileSizeLow;
+  DWORD    nNumberOfLinks;
+  DWORD    nFileIndexHigh;
+  DWORD    nFileIndexLow;
+} BY_HANDLE_FILE_INFORMATION, *PBY_HANDLE_FILE_INFORMATION, *LPBY_HANDLE_FILE_INFORMATION;
+
+BOOL GetFileInformationByHandle(
+/* [in]  */ HANDLE                       hFile,
+/* [out] */ LPBY_HANDLE_FILE_INFORMATION lpFileInformation
+);
+
 BOOL ReadFile(
 /* [in]                */ HANDLE       hFile,
 /* [out]               */ LPVOID       lpBuffer,
@@ -54,6 +77,17 @@ BOOL CloseHandle(
 /*  [in]  */ HANDLE hObject
 );
 ]])
+
+local function CloseHandle(hFile)
+  if ffi.C.CloseHandle(hFile) == 0 then
+    print("error closing file handle")
+  end
+end
+
+local OK = 0
+local INVALID_HANDLE_ERROR = 1
+local READ_ERROR = 2
+local FILE_INFO_ERROR = 3
 
 local NULL = ffi.cast("void *", 0)
 local GENERIC_READ = 0x80000000
@@ -80,28 +114,52 @@ local handle =
 
 if handle == INVALID_HANDLE_VALUE then
 	print("invalid handle")
-	os.exit(1)
+	os.exit(INVALID_HANDLE_ERROR)
 end
 
+local file_information = ffi.new("BY_HANDLE_FILE_INFORMATION")
+if ffi.C.GetFileInformationByHandle(handle, file_information) == 0 then
+  print("error getting file information")
+  CloseHandle(handle)
+  os.exit(FILE_INFO_ERROR)
+end
+
+local break_full = false
+local offset_low = 0
+local offset_high = 0
 local buffer_size_bytes = 8192
 local buffer = ffi.new("char [?]", buffer_size_bytes)
 local num_bytes = ffi.new("DWORD [?]", 1)
-local ret = ffi.C.ReadFile(handle, buffer, buffer_size_bytes, num_bytes, overlapped)
-if ret == 0 then
-	print("error reading file")
+while (not break_full) and offset_high <= file_information.nFileSizeHigh do
+  while (not break_full) and offset_low <= file_information.nFileSizeLow do
+    overlapped.DUMMYUNIONNAME.DUMMYSTRUCTNAME.Offset = ffi.new("DWORD", offset_low)
+    overlapped.DUMMYUNIONNAME.DUMMYSTRUCTNAME.OffsetHigh = ffi.new("DWORD", offset_high)
+    if ffi.C.ReadFile(handle, buffer, buffer_size_bytes, num_bytes, overlapped) == 0 then
+      print("error reading file")
+      CloseHandle(handle)
+      os.exit(READ_ERROR)
+    end
+    --[[
+    local i = 0
+    while i < num_bytes[0] do
+      io.write(string.char(buffer[i]))
+      i = i + 1
+    end
+    --]]
+    io.write(ffi.string(buffer, num_bytes[0]))
+
+    if num_bytes[0] < buffer_size_bytes then
+      break_full = true
+      break
+    end
+
+    offset_low = offset_low + buffer_size_bytes
+    if offset_low >= file_information.nFileSizeLow then
+      offset_low = offset_low - file_information.nFileSizeLow
+      offset_high = offset_high + 1
+    end
+  end
 end
 
-if ffi.C.CloseHandle(handle) == 0 then
-	print("error closing file handle")
-end
-
-if ret == 0 then
-  os.exit(1)
-end
---print(ffi.string(buffer, num_bytes[0]))
-local i = 0
-while i < num_bytes[0] do
-  io.write(string.char(buffer[i]))
-  i = i + 1
-end
 --io.write("\n")
+os.exit(OK)
