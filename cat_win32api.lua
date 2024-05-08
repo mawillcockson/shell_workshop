@@ -2,8 +2,8 @@
 -- This is a (poor) implementation of `cat` using win32 API functions, as a way
 -- of showing the complexity under the hood when using system/platform/OS APIs.
 --
--- This would be better in C or Zig, but that would require a compiler,
--- whereas luajit is quite compact.
+-- This would be better in C or Zig, but that would require a compiler (and the
+-- Windows SDK, probably), whereas luajit is quite lightweight.
 --]]
 
 -- https://luajit.org/ext_ffi_api.html
@@ -11,6 +11,7 @@ local ffi = require("ffi")
 --local bit = require("bit")
 
 local function printe(msg)
+  -- https://www.lua.org/manual/5.1/manual.html#5.7
 	local old = io.output()
 	io.output(io.stderr)
 	io.write(tostring(msg) .. "\n")
