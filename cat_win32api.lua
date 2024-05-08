@@ -11,7 +11,7 @@ local ffi = require("ffi")
 --local bit = require("bit")
 
 local function printe(msg)
-  -- https://www.lua.org/manual/5.1/manual.html#5.7
+	-- https://www.lua.org/manual/5.1/manual.html#5.7
 	local old = io.output()
 	io.output(io.stderr)
 	io.write(tostring(msg) .. "\n")
@@ -179,15 +179,16 @@ while (not break_full) and offset_high <= file_information.nFileSizeHigh do
 			os.exit(READ_ERROR)
 		end
 		--[[
-    local i = 0
-    while i < num_bytes[0] do
-      io.write(string.char(buffer[i]))
-      i = i + 1
-    end
-    --]]
+		local i = 0
+		while i < num_bytes[0] do
+			io.write(string.char(buffer[i]))
+			i = i + 1
+		end
+		--]]
 		io.write(ffi.string(buffer, num_bytes[0]))
 
 		if num_bytes[0] < buffer_size_bytes then
+			CloseHandle(handle)
 			break_full = true
 			break
 		end
