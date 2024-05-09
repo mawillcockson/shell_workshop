@@ -33,6 +33,67 @@ That extra work requires work, and may not be needed by every program. But basic
 
 write `cp` or something similar.
 
+## outline
+
+First a "hello world":
+
+```sh
+echo hello world
+```
+
+Probably in [Git Bash][]. Then, editing a script to introduce the [shebang][], and to ensure a script can be edited in an external editor:
+
+```sh
+#!/bin/sh
+echo hello world
+```
+
+change to
+
+```sh
+#!/bin/sh
+echo hello mars
+```
+
+### structure of a command
+
+Each line is likely going to mainly be calling a command. The command in question here is `echo`. This can be confirmed with another command: `which`. In the line `which echo`, `echo` is now an argument. In the file, `echo` is the command and it's being passed some arguments: `hello` and `mars`.
+
+How does the shell know what the command and the arguments are?
+
+Let's try writing our own program that prints out its arguments. Each language has a convention for fetching the arguments passed to the program. For example, this is `lua`: [`print_args.lua`](./print_args.lua).
+
+Running the command:
+
+```sh
+luajit print_args.lua
+```
+
+This doesn't produce much. In Lua, the indices start at 1, so anything before 1 isn't automatically shown when doing `ipairs(arg)`.
+
+How about `hello world`?
+
+Topics to cover:
+
+- `--flag=` and other conventions
+- parameters vs arguments
+- word splitting
+- quoting
+- file globbing
+- You can glob and not need to worry about escaping!
+
+Then focus on commands more:
+
+- collections
+    - GNU coreutils
+    - BSD
+    - BusyBox
+- Useful/common commands
+- pipelines
+- variables
+  - Can a variable be a `{ ... ; }` code thingy?
+- functions
+
 
 [shell doc]: <https://people.csail.mit.edu/saltzer/Multics/Multics-Documents/MDN/MDN-4.pdf>
 [shell history]: <https://multicians.org/shell.html>
