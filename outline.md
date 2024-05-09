@@ -92,7 +92,15 @@ Then focus on commands more:
 - pipelines
 - variables
   - Can a variable be a `{ ... ; }` code thingy?
+- control flow
 - functions
+
+## Pitfalls and incongruencies
+
+- flags
+  - why `-`?
+  - Windows uses `/`, and that is an illegal character in Windows paths
+  - confusion in `-` convention and need for things like `=` and `--`
 
 
 [shell doc]: <https://people.csail.mit.edu/saltzer/Multics/Multics-Documents/MDN/MDN-4.pdf>
