@@ -15,7 +15,7 @@ pub fn main() !void {
     const allocator = gpa.allocator();
     defer {
         const deinit_status = gpa.deinit();
-        if (deinit_status == .leak) @panic("leak");
+        if (deinit_status == .leak) @panic("memory leak");
     }
 
     var args_iter = try std.process.argsWithAllocator(allocator);
@@ -25,6 +25,6 @@ pub fn main() !void {
 
     var i: u32 = 0;
     while (args_iter.next()) |*arg| : (i += 1) {
-        try stdout.print("{d} -> {s}\n", .{ i, arg.* });
+        try stdout.print("{d} ->{s}<-\n", .{ i, arg.* });
     }
 }
