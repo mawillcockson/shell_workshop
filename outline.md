@@ -102,6 +102,33 @@ Then focus on commands more:
   - Windows uses `/`, and that is an illegal character in Windows paths
   - confusion in `-` convention and need for things like `=` and `--`
 
+### quoting examples
+
+```text
+nu$ : powershell-safe -c `cmd /c '.\print_args.exe "a\"" a"\'`
+╭───────────┬───────────────────────╮
+│ stdout    │ 0 -> .\print_args.exe │
+│           │ 1 -> a"               │
+│           │ 2 -> a\\              │
+│           │                       │
+│ stderr    │                       │
+│ exit_code │ 0                     │
+╰───────────┴───────────────────────╯
+
+nu$ : cmd /c '.\print_args.exe "a\"" a"\'
+0 -> .\print_args.exe
+1 -> "a\""
+2 -> a"\\
+
+nu$ : cmd
+Microsoft Windows [Version 10.0.22000.2538]
+(c) Microsoft Corporation. All rights reserved.
+> .\print_args.exe "a\"" a"\
+0 -> .\print_args.exe
+1 -> a"
+2 -> a\
+```
+
 
 [shell doc]: <https://people.csail.mit.edu/saltzer/Multics/Multics-Documents/MDN/MDN-4.pdf>
 [shell history]: <https://multicians.org/shell.html>
