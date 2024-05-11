@@ -71,6 +71,14 @@ luajit print_args.lua
 
 This doesn't produce much. In Lua, the indices start at 1, so anything before 1 isn't automatically shown when doing `ipairs(arg)`.
 
+A command using shell builtins would be:
+
+```sh
+print_args() {
+    printf -- '->%s<-\n' "$@"
+}
+```
+
 How about `hello world`?
 
 Topics to cover:
