@@ -103,12 +103,23 @@ Then focus on commands more:
 - control flow
 - functions
 
+### Commands
+
+Syntax of a command.
+
+Important definitions:
+
+[line][]
+: A sequence of zero or more non- <newline> characters plus a terminating <newline> character.
+
+
 ## Pitfalls and incongruencies
 
 - flags
   - why `-`?
   - Windows uses `/`, and that is an illegal character in Windows paths
   - confusion in `-` convention and need for things like `=` and `--`
+- `printf` over `echo` every time: `read -r FIRST;read -r LAST;echo "${FIRST}" "${LAST}"` with first name of `-e`
 
 ### quoting examples
 
