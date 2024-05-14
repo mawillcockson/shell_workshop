@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+  <body>
+    <pre class="mermaid">
+flowchart TB
+      %% 2.3 rule 1
+      Start[get a character]-->EOI{End of input?}-->|yes|eoi_token_end[end of token]-->End
+
+      %% 2.3 rule 2
+      EOI-->|no|can_start_operator{"can the character be the start of a new operator?"}-->|yes|operator_add["add character to (operator) token"]
+      operator_add-->operator_start[get a character]
+      operator_start-->operator_EOI{End of input?}-->|no|is_operator{"can the character be added to the current token to form an operator?"}
+      operator_EOI-->|yes|eoi_token_end
+      is_operator-->|yes|operator_add
+
+      %% 2.3 rule 3
+      is_operator-->|no|operator_end[end of operator token]-->is_backslash_singlequote_doublequote
+
+      %% 2.3 rule 4
+      can_start_operator-->|no|is_backslash_singlequote_doublequote{"is the character \, ', or #quot; ?"} -->|yes|quote_start[Begin quoting]
+
+      %% 2.3 rule 5
+      is_backslash_singlequote_doublequote-->|no|dollar_or_backquote{"is the character a #dollar; or #grave; ?"}-->|yes, $| open_brace["{"] & open_parenthesis["("] & double_open_parentheses["(("]
+      dollar_or_backquote-->|yes, `|backquote["#grave;"]
+      open_brace["{"]-->parameter_expansion[Parameter Expansion]
+      open_parenthesis["("]-->command_substitution[Command Subsistution]
+      double_open_parentheses["(("]-->arithmetic_expansion[Arithmetic Expansion]
+
+      %% 2.3 rule 6
+      %% dollar_or_backquote-->|no|can_start_operator
+
+      %% 2.3 rule 7
+      dollar_or_backquote-->|no|is_blank{"is the character a #lt;blank> ?"}
+      is_blank-->|yes|blank_token_end["end of token"]-->discard_blank["discard #lt;blank>"]-->Start
+
+      %% 2.3 rule 8
+      %% word_add[add character to current or new word]
+      %% word_start
+
+      %% 2.3 rule 9
+      is_blank-->|no|is_hash{"is the character a #num; ?"}
+      is_hash-->|yes|comment_add["add character to the current comment"]-->is_newline{"is the character a #lt;newline> ?"}
+      is_newline-->|yes|comment_end["end of (comment) token"]-->discard_comment["discard comment"]-->Start
+      is_newline-->|no|comment_start["get a character"]-->is_newline
+
+      %% 2.3 rule 10
+      is_hash-->|no|word_start["add the character to a new (word) token"]-->Start
+
+      %% io_here[Here-Document]-->here_document[Here document processing]
+    </pre>
+    <script type="module">
+      import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+    </script>
+  </body>
+</html>
