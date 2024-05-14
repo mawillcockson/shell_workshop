@@ -152,3 +152,17 @@ Microsoft Windows [Version 10.0.22000.2538]
 [shell doc]: <https://people.csail.mit.edu/saltzer/Multics/Multics-Documents/MDN/MDN-4.pdf>
 [shell history]: <https://multicians.org/shell.html>
 [shell wiki]: <https://en.wikipedia.org/wiki/Shell_(computing)>
+[thoughtbot]: <https://thoughtbot.com/blog/the-unix-shells-humble-if>
+[phoenix cheatsheet]: <https://phoenixnap.com/kb/linux-commands-cheat-sheet>
+[rich's tricks]: <https://www.etalabs.net/sh_tricks.html>
+[shellhaters]: <https://shellhaters.org/>
+[pure sh bible]: <https://github.com/dylanaraps/pure-sh-bible>
+[Unix filesystem]: <https://en.wikipedia.org/wiki/Unix_filesystem>
+[grymoire sh]: <https://www.grymoire.com/Unix/Sh.html>
+[whynot csh]: <http://www.faqs.org/faqs/unix-faq/shell/csh-whynot/>
+[grymoire no csh]: <https://www.grymoire.com/Unix/CshTop10.txt>
+[grymoire csh]: <https://www.grymoire.com/Unix/Csh.html>
+[csh wiki]: <https://en.wikipedia.org/wiki/C_shell#Design_objectives_and_features>
+[posix spec]: <https://pubs.opengroup.org/onlinepubs/9699919799/toc.htm>
+[line]: <https://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap03.html#tag_03_206>
+[text file]: <https://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap03.html#tag_03_403>
