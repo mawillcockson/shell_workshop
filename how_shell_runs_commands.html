@@ -4,47 +4,76 @@
     <pre class="mermaid">
 flowchart TB
       %% 2.3 rule 1
-      Start[get a character]-->EOI{End of input?}-->|yes|eoi_token_end[end of token]-->End
+      Start([get a character])-->EOI{End of input?}-->|yes|eoi_token_end[end of token]-->End
 
       %% 2.3 rule 2
-      EOI-->|no|can_start_operator{"can the character be the start of a new operator?"}-->|yes|operator_add["add character to (operator) token"]
-      operator_add-->operator_start[get a character]
-      operator_start-->operator_EOI{End of input?}-->|no|is_operator{"can the character be added to the current token to form an operator?"}
-      operator_EOI-->|yes|eoi_token_end
+      operator_add["add character to (operator) token"]-->operator_start[get a character]
+      operator_start-->operator_eoi{End of input?}
+      operator_eoi-->|yes|operator_eoi_token_end["end of (operator) token"]-->End
+      operator_eoi-->|no|is_operator{"can the character be added to the current token to form an operator?"}
       is_operator-->|yes|operator_add
+      %% EOI-->|no|can_start_operator{"can the character be the start of a new operator?"}
+      %% can_start_operator-->|yes|operator_add["add character to (operator) token"]
+      %% operator_add-->operator_start[get a character]-->operator_EOI{End of input?}
+      %% operator_EOI-->|no|is_operator{"can the character be added to the current token to form an operator?"}
+      %% operator_EOI-->|yes|operator_token_end[end of token]-->End
+      %% is_operator-->|yes|operator_add
+      %% implied:
+      can_start_operator-->operator_add
+      operator_end-->Start
 
       %% 2.3 rule 3
-      is_operator-->|no|operator_end[end of operator token]-->is_backslash_singlequote_doublequote
+      is_operator-->|no|operator_end["end of (operator) token"]
 
       %% 2.3 rule 4
-      can_start_operator-->|no|is_backslash_singlequote_doublequote{"is the character \, ', or #quot; ?"} -->|yes|quote_start[Begin quoting]
+      EOI-->|no|is_backslash_singlequote_doublequote
+      is_backslash_singlequote_doublequote{"is the character \, ', or #quot; ?"} -->|yes|quote_start[Begin quoting]
+      %% can_start_operator-->|no|is_backslash_singlequote_doublequote
 
       %% 2.3 rule 5
       is_backslash_singlequote_doublequote-->|no|dollar_or_backquote{"is the character a #dollar; or #grave; ?"}-->|yes, $| open_brace["{"] & open_parenthesis["("] & double_open_parentheses["(("]
       dollar_or_backquote-->|yes, `|backquote["#grave;"]
       open_brace["{"]-->parameter_expansion[Parameter Expansion]
-      open_parenthesis["("]-->command_substitution[Command Subsistution]
+      open_parenthesis["("]-->parenthesis_command_substitution[Command Subsistution]
       double_open_parentheses["(("]-->arithmetic_expansion[Arithmetic Expansion]
+      backquote-->backquote_command_substitution[Command Substitution]
 
       %% 2.3 rule 6
-      %% dollar_or_backquote-->|no|can_start_operator
+      dollar_or_backquote-->|no|can_start_operator{"can the character be the start of a new operator?"}
 
       %% 2.3 rule 7
-      dollar_or_backquote-->|no|is_blank{"is the character a #lt;blank> ?"}
+      can_start_operator-->|no|is_blank{"is the character a #lt;blank> ?"}
       is_blank-->|yes|blank_token_end["end of token"]-->discard_blank["discard #lt;blank>"]-->Start
 
       %% 2.3 rule 8
       %% word_add[add character to current or new word]
       %% word_start
+      word_add["add character to (word) token"]-->word_start["get a character"]
+      word_start-->word_EOI{End of input?}-->|yes|word_eoi_end["end of (word) token"]-->End
+      word_EOI-->|no|word_is_backslash_singlequote_doublequote{"is the character \, ', or #quot; ?"}
+      word_is_backslash_singlequote_doublequote-->|yes|word_quote_start[Begin quoting]
+      word_is_backslash_singlequote_doublequote-->|no|word_dollar_or_backquote{"is the character a #dollar; or a #grave; ?"}
+      word_dollar_or_backquote-->|yes, $| word_open_brace["{"] & word_open_parenthesis["("] & word_double_open_parentheses["(("]
+      word_dollar_or_backquote-->|yes, `|word_backquote["#grave;"]
+      word_dollar_or_backquote-->|no|word_can_start_operator{"can the character be the start of a new operator?"}
+      word_can_start_operator-->|yes|word_operator_end_previous["end of (word) token"]
+      word_operator_end_previous-->operator_add
+      word_can_start_operator-->|no|word_is_blank{"is the character a #lt;blank> ?"}
+      word_is_blank-->|yes|word_blank_token_end["end of (word) token"]-->discard_blank
+      word_is_blank-->|no|word_add
 
       %% 2.3 rule 9
       is_blank-->|no|is_hash{"is the character a #num; ?"}
-      is_hash-->|yes|comment_add["add character to the current comment"]-->is_newline{"is the character a #lt;newline> ?"}
+      is_hash-->|yes|comment_add["add character to the current comment"]
+      comment_add-->comment_start["get a character"]
+      comment_start-->comment_eoi{End of input?}
+      comment_eoi-->|yes|comment_eoi_end["end of (comment) token"]-->discard_eoi_commend["discard comment"]-->End
+      comment_eoi-->|no|is_newline{"is the character a #lt;newline> ?"}
       is_newline-->|yes|comment_end["end of (comment) token"]-->discard_comment["discard comment"]-->Start
-      is_newline-->|no|comment_start["get a character"]-->is_newline
+      is_newline-->|no|comment_add
 
       %% 2.3 rule 10
-      is_hash-->|no|word_start["add the character to a new (word) token"]-->Start
+      is_hash-->|no|word_startof["add the character to a new (word) token"]-->word_start
 
       %% io_here[Here-Document]-->here_document[Here document processing]
     </pre>
