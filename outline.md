@@ -166,3 +166,4 @@ Microsoft Windows [Version 10.0.22000.2538]
 [posix spec]: <https://pubs.opengroup.org/onlinepubs/9699919799/toc.htm>
 [line]: <https://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap03.html#tag_03_206>
 [text file]: <https://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap03.html#tag_03_403>
+[term vs shell]: <https://learn.microsoft.com/en-us/windows/terminal/faq#what-is-the-difference-between-a-shell-and-a-terminal>
