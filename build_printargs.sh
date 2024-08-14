@@ -54,7 +54,7 @@ case "x$(uname --machine)x" in
         error 'unknown architecture: '"$(uname --machine)";;
 esac
 
-if [ "x${OS}x" = 'windows' ]; then
+if [ "x${OS}x" = 'xwindowsx' ]; then
     EXT='zip'
 else
     EXT='tar.xz'
@@ -66,7 +66,7 @@ info "downloading zig to -> ${ZIG_ARCHIVE}"
 curl -L "https://ziglang.org/download/0.13.0/zig-${OS}-${ARCH}-0.13.0.${EXT}" --output "${ZIG_ARCHIVE}"
 
 info 'unpacking zig archive'
-if [ "x${OS}x" = 'windows' ]; then
+if [ "x${OS}x" = 'xwindowsx' ]; then
     unzip "${ZIG_ARCHIVE}" -d "${TMPDIR}"
 else
     tar -xJf "${ZIG_ARCHIVE}" -C "${TMPDIR}"
