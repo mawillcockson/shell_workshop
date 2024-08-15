@@ -67,7 +67,7 @@ curl -L "https://ziglang.org/download/0.13.0/zig-${OS}-${ARCH}-0.13.0.${EXT}" --
 
 info 'unpacking zig archive'
 if [ "x${OS}x" = 'xwindowsx' ]; then
-    unzip "${ZIG_ARCHIVE}" -d "${TMPDIR}"
+    unzip -q "${ZIG_ARCHIVE}" -d "${TMPDIR}"
 else
     tar -xJf "${ZIG_ARCHIVE}" -C "${TMPDIR}"
 fi
