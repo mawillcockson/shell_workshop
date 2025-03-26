@@ -1,0 +1,4 @@
+- parameters vs arguments
+- function == command
+  - function is a stored procedure, as if you typed in the commands yourself
+- variables $1 through ${unlimited}
